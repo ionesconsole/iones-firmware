@@ -5,27 +5,28 @@
 #include "bitmaps.h"
 
 void splash() {
-
-    // init logo
-    TFT_eSprite* logo_sprite = new TFT_eSprite(&tft);
-    logo_sprite -> setAttribute(PSRAM_ENABLE, true);
-
-    logo_sprite -> createSprite(187, 51);
-    //logo_sprite -> createSprite(1000, 1000);
-    logo_sprite -> pushImage(0, 0, 187, 51, logo);
-
-    // draw splash screen
     frame_buffer.fillSprite(TFT_DARKGREY);
-    logo_sprite -> pushToSprite(&frame_buffer, 67, 95, HATED_COLOR);
+    frame_buffer.pushImage(67, 95, 187, 51, logo);
     frame_buffer.pushSprite(0, 0);
-
-    if(frame_buffer.getAttribute(PSRAM_ENABLE))
-        printf("FB PSRAM\n");
-    if(logo_sprite -> getAttribute(PSRAM_ENABLE))
-        printf("FB PSRAM\n");
-
-    delay(100);
-
-    delete logo_sprite;
-
 }
+
+
+void draw_ui_base(bool push) {
+    frame_buffer.fillSprite(TFT_WHITE);
+    frame_buffer.fillRect(0, 220, 320, 20, TFT_LIGHTGREY);
+
+    if(push) frame_buffer.pushSprite(0, 0);
+}
+
+void draw_sd_error() {
+
+    frame_buffer.pushImage(139, 72, 42, 56, sd_error);
+    frame_buffer.setTextColor(TFT_DARKGREY);
+    frame_buffer.drawString("SD card could not be read.", 75, 140, 2);
+    frame_buffer.drawString("Press RESET to try again.", 80, 160, 2);
+}
+
+// 21 28
+// 320 240 --> 160 120 --> x: 139 y: 92
+
+void push_frame() { frame_buffer.pushSprite(0, 0); }
