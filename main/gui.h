@@ -19,3 +19,13 @@ void draw_sd_error();
  * Pushes the frame buffer to screen
  */
 void push_frame();
+
+/**
+ * Initializes the application list
+ */
+void init_list();
+
+/**
+ * Main loop that drives the GUI
+ */
+void gui_loop();

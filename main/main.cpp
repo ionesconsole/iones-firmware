@@ -10,8 +10,10 @@
 
 // Init TFT interface
 TFT_eSPI tft = TFT_eSPI();
-TFT_eSprite frame_buffer = TFT_eSprite(&tft);
+TFT_eSprite frame_buffer_gui = TFT_eSprite(&tft);
 SPIClass sdspi(FSPI);
+char (*appnames)[9];
+int appcount = 0;
 
 
 // _______________TEMP IO_______________ //
@@ -53,11 +55,11 @@ extern "C" void app_main(void)
     tft.setSwapBytes(true);
     tft.setAttribute(PSRAM_ENABLE, true);
 
-    frame_buffer.setAttribute(PSRAM_ENABLE, true);
+    frame_buffer_gui.setAttribute(PSRAM_ENABLE, true);
 
     // init framebuffer
-    frame_buffer.createSprite(320, 240);
-    frame_buffer.setSwapBytes(true);
+    frame_buffer_gui.createSprite(320, 240);
+    frame_buffer_gui.setSwapBytes(true);
 
     splash();
 
@@ -66,26 +68,19 @@ extern "C" void app_main(void)
 
     draw_ui_base();
 
-    if(sd_ok)
-        tft.printf("SD SUCCESS\n");
-    else {
-        tft.printf("SD FAIL\n");
+    if(!sd_ok) {
         draw_sd_error();
+        push_frame();
+        return;
     }
 
-    push_frame();
 
     io_init();
-    while(1) {
-        if(up_press()) printf("UP\n");
-        if(dn_press()) printf("DN\n");
-
-        delay(1);
-    }
-    
-    
+    init_list();
+    gui_loop();
+    // RUNGAME
+ 
 }
-
 
 
 
