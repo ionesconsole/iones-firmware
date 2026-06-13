@@ -31,4 +31,4 @@ void init_list();
  */
 void gui_loop();
 
-void fatal_err();
+void gui_err();

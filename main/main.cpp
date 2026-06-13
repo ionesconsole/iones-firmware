@@ -8,6 +8,7 @@
 #include "SD.h"
 #include "SPI.h"
 #include "globals.h"
+#include "application.h"
 
 // Init TFT interface
 TFT_eSPI tft = TFT_eSPI();
@@ -93,24 +94,19 @@ extern "C" void app_main(void)
     io_init();
     while(current_state != EXEC) {
         switch(current_state) {
-            case LIST_INIT:
+        case LIST_INIT:
             init_list();
             printf("FREE SPACE after init: %ld\n", ESP.getFreePsram());
             break;
-            case FATAL:
-            fatal_err();
+        case FATAL:
+            gui_err();
             return;
-            case GUI_LOOP:
+        case GUI_LOOP:
             gui_loop();
             break;
-            case LOAD:
-            printf("Loading %s...\n", selectedapp);
-            tft.fillRect(0, 0, 320, 240, TFT_BLUE);
-            tft.setCursor(0, 0);
-            tft.printf("Loading %s...", selectedapp);
+        case LOAD:
             printf("FREE SPACE: %ld\n", ESP.getFreePsram());
-            delay(1000);
-            current_state = LIST_INIT;
+            load_app();
             break;
             default:
             break;

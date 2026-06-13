@@ -7,3 +7,5 @@
 #define SD_SCK 12
 #define SD_MOSI 11
 #define SD_MISO 13
+
+#define PATH_MAX_IOWR 256
