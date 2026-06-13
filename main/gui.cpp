@@ -150,9 +150,9 @@ void gui_loop() {
 
 
 void gui_err() {
-    //frame_buffer_gui.pushImage(139, 72, 42, 56, sd_error);
     draw_ui_base();
+    frame_buffer_gui.pushImage(20, 40, 40, 34, exclam);
     frame_buffer_gui.setTextColor(TFT_DARKGREY);
-    frame_buffer_gui.drawString(current_err, 20, 40, 2);
+    frame_buffer_gui.drawString(current_err, 20, 100, 2);
     push_frame();
 }
