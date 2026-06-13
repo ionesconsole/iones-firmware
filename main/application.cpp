@@ -49,7 +49,7 @@ void load_app() {
     execfile.close();
 
     if(readsize != exec_len_B) {
-        free(exec_bytes);
+        heap_caps_free(exec_bytes);
         printf("File could not be read properly -- PSRAM freed\n");
         current_err = "File could not be read properly -- PSRAM freed.";
         delay(3000);
@@ -64,4 +64,22 @@ void load_app() {
     tft.fillRect(0, 0, 320, 240, TFT_BLACK);
 
 
+}
+
+#include "syscalls.h"
+void exec_app() {
+
+    WRState* wr_state = wr_newState();
+    init_syscalls(wr_state);
+
+    printf("Before: %u\n", uxTaskGetStackHighWaterMark(NULL));
+
+    // Run the application
+    wr_run(wr_state, exec_bytes, exec_len_B);
+
+    printf("After: %u\n", uxTaskGetStackHighWaterMark(NULL));
+
+    // Cleanup
+    heap_caps_free(exec_bytes);
+    wr_destroyState(wr_state);
 }

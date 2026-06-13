@@ -112,6 +112,10 @@ extern "C" void app_main(void)
             break;
         }
     }
+
+
+    exec_app();
+    printf("FREE SPACE after exec: %ld\n", ESP.getFreePsram());
  
 }
 

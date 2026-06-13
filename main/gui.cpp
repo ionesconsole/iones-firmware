@@ -141,7 +141,7 @@ void gui_loop() {
     }
 
     strncpy(selectedapp, appnames[current_app_index], 9);
-    free(appnames); // !!! App list freed
+    heap_caps_free(appnames); // !!! App list freed
     printf("App names freed.\n");
     current_state = LOAD;
     return;
