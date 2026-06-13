@@ -1,0 +1,7 @@
+#include "globals.h"
+
+char (*appnames)[9];
+int appcount = 0;
+enum sys_state current_state = LIST_INIT;
+const char* current_err;
+char selectedapp[9];

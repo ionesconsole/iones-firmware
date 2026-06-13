@@ -38,51 +38,66 @@ void init_list() {
         if(!entry) break;
         if(entry.isDirectory()) appcount++;
         //if(!entry.isDirectory()) printf("%s is not dir.\n", entry.name());
+        //printf("%s\n", entry.name());
         entry.close();
     }
+
+    printf("App count: %d\n", appcount);
 
     //printf("File appcount: %d\n", appcount);
     if(appcount == 0) {
         root.close();
+        current_state = FATAL;
+        current_err = "No applications found.";
+        printf("No application found.\nClosed root.\nList was not allocated anyway.\n");
         return;
     }
 
-    //appnames = (char**) malloc(appcount * sizeof(char*));
     appnames = (char (*) [9]) heap_caps_malloc(appcount * sizeof(*appnames), MALLOC_CAP_SPIRAM);
+
+    if(appnames == nullptr) {
+        root.close();
+        current_state = FATAL;
+        current_err = "Somehow, the application list could not be initialized.";
+        printf("Something went wrong while allocating list.\nClosed root.\n");
+        return;
+    }
     
     root.rewindDirectory();
     for(int i = 0; i < appcount; i++) {
         File entry = root.openNextFile();
         if(!entry) break;
-        if(entry.isDirectory()) {
-            strncpy(appnames[i], entry.name(), 9);
+        if(!entry.isDirectory()) {
+            i--;
+            continue;
         }
+        strncpy(appnames[i], entry.name(), 9);
         entry.close();
     }
 
+
     root.close();
+
+    printf("List initialised successfully.\nClosed root.\nList remains allocated.\n");
+    for(int i = 0; i < appcount; i++) printf("%s\n", appnames[i]);
+
+    current_state = GUI_LOOP;
 
 }
 
 bool up_press();
 bool dn_press();
+bool a_press();
 
 void draw_list_base() {
     frame_buffer_gui.fillRect(0, 0, 320, 220, TFT_WHITE);
     frame_buffer_gui.fillRectVGradient(0, 88, 320, 44, TFT_SKYBLUE, TFT_BLUE);
     frame_buffer_gui.fillRectVGradient(0, 132, 320, 6, TFT_LIGHTGREY, TFT_WHITE);
-    for(int i = 0; i < 220; i += 44) frame_buffer_gui.drawLine(0, i, 319, i, TFT_LIGHTGREY);
+    //for(int i = 0; i < 220; i += 44) frame_buffer_gui.drawLine(0, i, 319, i, TFT_LIGHTGREY);
 
 }
 
 void render_list(int index = 0) {
-    
-    if(appcount == 0) {
-        frame_buffer_gui.setTextColor(TFT_DARKGREY);
-        frame_buffer_gui.drawString("No application found.", 20, 15, 2);
-        push_frame();
-        return;
-    }
 
     char locstr[23];
     snprintf(locstr, 23, "%d of %d", index + 1, appcount);
@@ -105,7 +120,6 @@ void render_list(int index = 0) {
 }
 
 void gui_loop() {
-    bool gui_should_not_close = true;
     int current_app_index = 0;
 
     frame_buffer_gui.setTextColor(TFT_BLACK);
@@ -113,7 +127,7 @@ void gui_loop() {
 
     render_list();
 
-    while(gui_should_not_close) {
+    while(true) {
 
         if(up_press() && current_app_index > 0) {
             current_app_index--;
@@ -121,8 +135,20 @@ void gui_loop() {
         } else if(dn_press() && current_app_index < appcount-1) {
             current_app_index++;
             render_list(current_app_index);
-        }
+        } else if(a_press()) break;
 
         delay(1);
     }
+
+    strncpy(selectedapp, appnames[current_app_index], 9);
+    free(appnames); // !!! App list freed
+    printf("App names freed.\n");
+    current_state = LOAD;
+    return;
+
+}
+
+
+void fatal_err() {
+    tft.printf("%s \n", current_err);
 }

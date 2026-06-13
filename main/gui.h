@@ -21,7 +21,8 @@ void draw_sd_error();
 void push_frame();
 
 /**
- * Initializes the application list
+ * Initializes the application list.
+ * @important Don't forget to free the list after the desired value is selected.
  */
 void init_list();
 
@@ -29,3 +30,5 @@ void init_list();
  * Main loop that drives the GUI
  */
 void gui_loop();
+
+void fatal_err();
