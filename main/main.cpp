@@ -81,17 +81,16 @@ extern "C" void app_main(void)
     bool sd_ok = SD.begin(SD_CS,  tft.getSPIinstance());
     delay(1000);
 
-    draw_ui_base();
-
     // Mount fail --> fatal
     if(!sd_ok) {
         draw_sd_error();
-        push_frame();
         return;
     }
 
 
     io_init();
+
+    // System FSM
     while(current_state != EXEC) {
         switch(current_state) {
         case LIST_INIT:

@@ -21,10 +21,11 @@ void _sys_print( WRContext* c, const WRValue* argv, const int argn, WRValue& ret
 	}
 }
 
-
+// --- TEMP ---
 bool up_press();
 bool dn_press();
 bool a_press();
+
 
 void _sys_up_press_test( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr ) {
 	retVal = up_press();
@@ -36,3 +37,5 @@ void _sys_dn_press_test( WRContext* c, const WRValue* argv, const int argn, WRVa
 void _sys_a_press_test( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr ) {
 	retVal = a_press();
 }
+
+// --- TEMP ---

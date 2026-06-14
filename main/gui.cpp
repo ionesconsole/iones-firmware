@@ -4,29 +4,34 @@
 #include "config.h"
 #include "bitmaps.h"
 
-void splash() {
-    frame_buffer_gui.fillSprite(TFT_DARKGREY);
-    frame_buffer_gui.pushImage(67, 95, 187, 51, logo);
-    frame_buffer_gui.pushSprite(0, 0);
-}
-
-void draw_ui_base(bool push) {
+/**
+ * Draws the outline of the UI to the frame buffer
+ */
+void draw_ui_base() {
     frame_buffer_gui.fillSprite(TFT_WHITE);
     frame_buffer_gui.fillRect(0, 220, 320, 20, TFT_LIGHTGREY);
     frame_buffer_gui.fillRectVGradient(0, 220, 320, 5, TFT_DARKGREY, TFT_LIGHTGREY);
+}
 
-    if(push) frame_buffer_gui.pushSprite(0, 0);
+/**
+ * Pushes the frame buffer to the screen
+ */
+void push_frame() { frame_buffer_gui.pushSprite(0, 0); }
+
+void splash() {
+    frame_buffer_gui.fillSprite(TFT_DARKGREY);
+    frame_buffer_gui.pushImage(67, 95, 187, 51, logo);
+    push_frame();
 }
 
 void draw_sd_error() {
-
+    draw_ui_base();
     frame_buffer_gui.pushImage(139, 72, 42, 56, sd_error);
     frame_buffer_gui.setTextColor(TFT_DARKGREY);
     frame_buffer_gui.drawString("SD card could not be read.", 75, 140, 2);
     frame_buffer_gui.drawString("Press RESET to try again.", 80, 160, 2);
+    push_frame();
 }
-
-void push_frame() { frame_buffer_gui.pushSprite(0, 0); }
 
 void init_list() {
     File root = SD.open("/");
@@ -37,19 +42,14 @@ void init_list() {
         File entry = root.openNextFile();
         if(!entry) break;
         if(entry.isDirectory()) appcount++;
-        //if(!entry.isDirectory()) printf("%s is not dir.\n", entry.name());
-        //printf("%s\n", entry.name());
         entry.close();
     }
 
-    printf("App count: %d\n", appcount);
-
-    //printf("File appcount: %d\n", appcount);
     if(appcount == 0) {
         root.close();
         current_state = FATAL;
         current_err = "No applications found.";
-        printf("No application found.\nClosed root.\nList was not allocated anyway.\n");
+        //printf("No application found.\nClosed root.\nList was not allocated anyway.\n");
         return;
     }
 
@@ -59,7 +59,7 @@ void init_list() {
         root.close();
         current_state = FATAL;
         current_err = "Somehow, the application list could not be initialized.";
-        printf("Something went wrong while allocating list.\nClosed root.\n");
+        //printf("Something went wrong while allocating list.\nClosed root.\n");
         return;
     }
     
@@ -67,28 +67,29 @@ void init_list() {
     for(int i = 0; i < appcount; i++) {
         File entry = root.openNextFile();
         if(!entry) break;
-        if(!entry.isDirectory()) {
-            i--;
-            continue;
-        }
+        if(!entry.isDirectory()) { i--; continue; }
         strncpy(appnames[i], entry.name(), 9);
         entry.close();
     }
 
-
     root.close();
 
     printf("List initialised successfully.\nClosed root.\nList remains allocated.\n");
-    for(int i = 0; i < appcount; i++) printf("%s\n", appnames[i]);
+    printf("App count: %d\n", appcount);
+    //for(int i = 0; i < appcount; i++) printf("%s\n", appnames[i]);
 
     current_state = GUI_LOOP;
 
 }
 
+// TEMP
 bool up_press();
 bool dn_press();
 bool a_press();
 
+/**
+ * Draws the outlines of the rendered list to the frame buffer
+ */
 void draw_list_base() {
     frame_buffer_gui.fillRect(0, 0, 320, 220, TFT_WHITE);
     frame_buffer_gui.fillRectVGradient(0, 88, 320, 44, TFT_SKYBLUE, TFT_BLUE);
@@ -97,8 +98,12 @@ void draw_list_base() {
 
 }
 
+/**
+ * Draws the portion of the list to the frame buffer, according to the selected index 
+ */
 void render_list(int index = 0) {
 
+    // Preparing the N of N text
     char locstr[23];
     snprintf(locstr, 23, "%d of %d", index + 1, appcount);
     draw_list_base();
@@ -122,8 +127,10 @@ void render_list(int index = 0) {
 void gui_loop() {
     int current_app_index = 0;
 
+    draw_ui_base();
+
     frame_buffer_gui.setTextColor(TFT_BLACK);
-    frame_buffer_gui.drawString("A : Select", 20, 223, 2);
+    frame_buffer_gui.drawString("A : Launch", 20, 223, 2);
 
     render_list();
 
@@ -145,7 +152,6 @@ void gui_loop() {
     printf("App names freed.\n");
     current_state = LOAD;
     return;
-
 }
 
 

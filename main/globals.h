@@ -9,6 +9,10 @@ extern TFT_eSprite frame_buffer_gui;
 extern SPIClass sdspi;
 
 extern char (*appnames)[9];
+
+/**
+ * Total number of apps available (folders in root)
+ */
 extern int appcount;
 
 enum sys_state {

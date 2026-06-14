@@ -2,27 +2,18 @@
 
 /**
  * Draws the splash screen.
+ * Pushed automatically.
  */
 void splash();
 
 /**
- * Draws the base of the UI
- */
-void draw_ui_base(bool push = false);
-
-/**
- * Shows the SD card error
+ * Draws the SD card error to the frame buffer.
  */
 void draw_sd_error();
 
 /**
- * Pushes the frame buffer to screen
- */
-void push_frame();
-
-/**
  * Initializes the application list.
- * @important Don't forget to free the list after the desired value is selected.
+ * Don't forget to free the list after the desired value is selected.
  */
 void init_list();
 
@@ -31,4 +22,9 @@ void init_list();
  */
 void gui_loop();
 
+/**
+ * Draws the system error messages.
+ * Don't forget to assign current_err to the string desired before calling this function.
+ * Pushed automatically.
+ */
 void gui_err();
