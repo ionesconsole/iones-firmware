@@ -82,11 +82,6 @@ void init_list() {
 
 }
 
-// TEMP
-bool up_press();
-bool dn_press();
-bool a_press();
-
 /**
  * Draws the outlines of the rendered list to the frame buffer
  */
@@ -124,36 +119,41 @@ void render_list(int index = 0) {
     push_frame();
 }
 
+#include "input.h"
 void gui_loop() {
-    int current_app_index = 0;
 
     draw_ui_base();
 
     frame_buffer_gui.setTextColor(TFT_BLACK);
-    frame_buffer_gui.drawString("A : Launch", 20, 223, 2);
+    frame_buffer_gui.drawString ("A : Launch", 20, 223, 2);
+
+    int current_app_index = 0;
 
     render_list();
 
     while(true) {
 
-        if(up_press() && current_app_index > 0) {
+        read_gm_input();
+        
+        if(gm_inputs & GM_U && !(last_gm_inputs & GM_U) && current_app_index > 0) {
             current_app_index--;
             render_list(current_app_index);
-        } else if(dn_press() && current_app_index < appcount-1) {
+        } else if(gm_inputs & GM_D && !(last_gm_inputs & GM_D) && current_app_index < appcount-1) {
             current_app_index++;
             render_list(current_app_index);
-        } else if(a_press()) break;
+        } else if(gm_inputs & GM_A && !(last_gm_inputs & GM_A)) break;
+    
+        delay(10);
 
-        delay(1);
     }
 
     strncpy(selectedapp, appnames[current_app_index], 9);
     heap_caps_free(appnames); // !!! App list freed
     printf("App names freed.\n");
+
     current_state = LOAD;
     return;
 }
-
 
 void gui_err() {
     draw_ui_base();

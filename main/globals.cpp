@@ -14,3 +14,6 @@ char selectedapp[9];
 unsigned char* exec_bytes = nullptr;
 
 size_t exec_len_B;
+
+uint8_t gm_inputs;
+uint8_t last_gm_inputs;

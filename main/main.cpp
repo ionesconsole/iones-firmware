@@ -4,6 +4,7 @@
 #include "Arduino.h"
 #include "gui.h"
 #include "config.h"
+#include "input.h"
 
 #include "SD.h"
 #include "SPI.h"
@@ -18,45 +19,38 @@ SPIClass sdspi(FSPI);
 
 
 
-// _______________TEMP IO_______________ //
-bool last_dn = false;
-bool last_up = false;
-bool last_a  = false;
-#define UP GPIO_NUM_5
-#define DN GPIO_NUM_6
-#define GM_A GPIO_NUM_7
 
 void io_init() {
-    gpio_reset_pin(UP);
-    gpio_set_pull_mode(UP, GPIO_PULLDOWN_ONLY);
-    gpio_set_direction(UP, GPIO_MODE_INPUT);
-    gpio_reset_pin(DN);
-    gpio_set_pull_mode(DN, GPIO_PULLDOWN_ONLY);
-    gpio_set_direction(DN, GPIO_MODE_INPUT);
-    gpio_reset_pin(GM_A);
-    gpio_set_pull_mode(GM_A, GPIO_PULLDOWN_ONLY);
-    gpio_set_direction(GM_A, GPIO_MODE_INPUT);
+
+    gpio_reset_pin(GM_CP); // out
+    gpio_reset_pin(GM_PL); // out
+    gpio_reset_pin(GM_Q7); // in
+
+    gpio_set_direction(GM_CP, GPIO_MODE_OUTPUT);
+    gpio_set_direction(GM_PL, GPIO_MODE_OUTPUT);
+    gpio_set_direction(GM_Q7, GPIO_MODE_INPUT);
+    gpio_set_pull_mode(GM_Q7, GPIO_PULLDOWN_ONLY);
+
 }
 
-bool up_press() {
-    bool up = gpio_get_level(UP);
-    bool ret = last_up == false && up;
-    last_up = up;
-    return ret;
+void read_gm_input() {
+    
+    gpio_set_level(GM_PL, 0);
+    gpio_set_level(GM_CP, 0);
+    gpio_set_level(GM_CP, 1);
+    gpio_set_level(GM_PL, 1);
+
+    last_gm_inputs = gm_inputs;
+
+    for(int i = 0; i < 8; i++) {
+        gm_inputs <<= 1;
+        gm_inputs |= gpio_get_level(GM_Q7);
+
+        gpio_set_level(GM_CP, 0);
+        gpio_set_level(GM_CP, 1);   
+    }
 }
-bool dn_press() {
-    bool dn = gpio_get_level(DN);
-    bool ret = last_dn == false && dn;
-    last_dn = dn;
-    return ret;
-}
-bool a_press() {
-    bool a = gpio_get_level(GM_A);
-    bool ret = last_a == false && a;
-    last_a = a;
-    return ret;
-}
-// ____________END OF TEMP IO_____________ //
+
 
 extern "C" void app_main(void)
 {
