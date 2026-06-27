@@ -21,4 +21,7 @@
 #define GM_D (1u << 6)
 #define GM_L (1u << 7)
 
+#define GM_SEL GPIO_NUM_15
+#define GM_STR GPIO_NUM_16
+
 #define PATH_MAX_IOWR 256

@@ -22,14 +22,21 @@ SPIClass sdspi(FSPI);
 
 void io_init() {
 
-    gpio_reset_pin(GM_CP); // out
-    gpio_reset_pin(GM_PL); // out
-    gpio_reset_pin(GM_Q7); // in
+    gpio_reset_pin(GM_CP);  // out
+    gpio_reset_pin(GM_PL);  // out
+    gpio_reset_pin(GM_Q7);  // in
+    gpio_reset_pin(GM_SEL); // in
+    gpio_reset_pin(GM_STR); // in
 
-    gpio_set_direction(GM_CP, GPIO_MODE_OUTPUT);
-    gpio_set_direction(GM_PL, GPIO_MODE_OUTPUT);
-    gpio_set_direction(GM_Q7, GPIO_MODE_INPUT);
-    gpio_set_pull_mode(GM_Q7, GPIO_PULLDOWN_ONLY);
+    gpio_set_direction(GM_CP,   GPIO_MODE_OUTPUT);
+    gpio_set_direction(GM_PL,   GPIO_MODE_OUTPUT);
+    gpio_set_direction(GM_Q7,   GPIO_MODE_INPUT);
+    gpio_set_direction(GM_SEL,  GPIO_MODE_INPUT);
+    gpio_set_direction(GM_STR,  GPIO_MODE_INPUT);
+
+    gpio_set_pull_mode(GM_Q7,   GPIO_PULLDOWN_ONLY);
+    gpio_set_pull_mode(GM_SEL,  GPIO_PULLUP_ONLY);
+    gpio_set_pull_mode(GM_STR,  GPIO_PULLUP_ONLY);
 
 }
 
@@ -49,6 +56,23 @@ void read_gm_input() {
         gpio_set_level(GM_CP, 0);
         gpio_set_level(GM_CP, 1);   
     }
+}
+
+// TODO: gm_select and gm_start are declared globally just in case.
+// TODO: if in_place turns out to slow down the system, remove "bool" decleration to
+// TODO: use the global ones.
+bool select_pressed() {
+    bool gm_select   = gpio_get_level(GM_SEL);
+    bool selstartout = !gm_select && last_select;
+    last_select = gm_select;
+    return selstartout;
+}
+
+bool start_pressed() {
+    bool gm_start   = gpio_get_level(GM_STR);
+    bool selstartout = !gm_start && last_start;
+    last_start = gm_start;
+    return selstartout;
 }
 
 
