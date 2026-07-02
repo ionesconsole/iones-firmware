@@ -1,5 +1,5 @@
 #pragma once
-
+#include "globals.h"
 #include <Arduino.h>
 #include <stdint.h>
 
@@ -56,13 +56,20 @@ bool fb_init(uint8_t flags = 0);
 void fb_begin_frame(uint16_t color);
 void fb_end_frame();
 
-void fb_clear(uint16_t color);
+void fb_clear_color(uint16_t color = TFT_BLACK);
+void fb_clear_depth(uint16_t depth = 0xFFFF);
+void fb_clear_stencil(uint8_t stencil = 0);
+void fb_clear_all(
+    uint16_t color = TFT_BLACK,
+    uint16_t depth = 0xFFFF,
+    uint8_t stencil = 0
+);
 void fb_set_pixel(int x, int y, uint16_t color);
 void fb_get_pixel();
 
 //drawing functions
 
-void fb_drawRectangle(int x, int y, int height, int weight, uint16_t color);
+void fb_drawRectangle(int x, int y, int height, int width, uint16_t color);
 
 //flush to tft
 //void fb_push_wrapper();
