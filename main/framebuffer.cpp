@@ -6,7 +6,7 @@ const int len = TFT_WIDTH * TFT_HEIGHT;
 
 FrameBuffer fb;
 
-bool fb_init(uint8_t flags = 0){
+bool fb_init(uint8_t flags){
     
     size_t bytes = fb.height*fb.width*sizeof(uint16_t);
     fb.colorBuffer = (uint16_t*)ps_malloc(bytes);
@@ -31,7 +31,7 @@ bool fb_init(uint8_t flags = 0){
     }
 
     if(flags & FB_STENCIL_BUFFER){
-        fb.stencilBuffer = (uint8_t*)ps_malloc(bytes);
+        fb.stencilBuffer = (uint8_t*)ps_malloc(bytes/2);
         if(!fb.stencilBuffer){
             Serial.printf("stencilBuffer could not be allocated on psram..: %u bytes", bytes);
             //fb_shutdown
@@ -59,21 +59,21 @@ bool fb_init(uint8_t flags = 0){
 
 
 void fb_clear_color(uint16_t color){
-    if(!fb.colorBuffer){ Serial.printf("No colorBuffer exists!");}
+    if(!fb.colorBuffer){ Serial.printf("No colorBuffer exists!");return;}
 
     for(int i = 0; i < len; i++){
         fb.colorBuffer[i] = color;
     } 
 }
 void fb_clear_depth(uint16_t depth){
-    if(!fb.depthBuffer){ Serial.printf("No depthBuffer exists!");}
+    if(!fb.depthBuffer){ Serial.printf("No depthBuffer exists!");return;}
 
     for(int i = 0; i < len; i++){
         fb.depthBuffer[i] = depth;
     }  
 }
 void fb_clear_stencil(uint8_t stencil){
-    if(!fb.stencilBuffer){ Serial.printf("No stencilBuffer exists!");}
+    if(!fb.stencilBuffer){ Serial.printf("No stencilBuffer exists!");return;}
 
     for(int i = 0; i < len; i++){
         fb.stencilBuffer[i] = stencil;
@@ -139,10 +139,10 @@ uint16_t fb_get_pixel(int x, int y){
     if(y<0 || y >= TFT_HEIGHT){
         return TFT_BLACK;
     }
-    return fb.colorBuffer[y + TFT_WIDTH*x];
+    return fb.colorBuffer[x + fb.width*y];
 }
 
-void fb_drawRectangle(int x, int y, int height, int width, uint16_t color){
+void fb_drawRectangle(int x, int y, int width, int height, uint16_t color){
     if (x<0 || width > TFT_WIDTH)
     {
         return;
@@ -158,7 +158,7 @@ void fb_drawRectangle(int x, int y, int height, int width, uint16_t color){
     {
         for (int j = x; j < x + width; j++)
         {
-            fb.colorBuffer[x + y*fb.width] = color;            
+            fb.colorBuffer[i + j*fb.width] = color;            
         }
         
     }
