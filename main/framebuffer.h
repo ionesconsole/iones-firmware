@@ -25,6 +25,13 @@ struct DirtyRect{
 
 };
 
+struct Viewport{
+    int x;
+    int y;
+    int width;
+    int height;
+};
+
 
 struct FrameBuffer{
     int width;
@@ -66,9 +73,13 @@ void fb_clear_all(
 );
 void fb_set_pixel(int x, int y, uint16_t color);
 void fb_get_pixel();
-
+void fb_print_info();
 //drawing functions
+void fb_drawPixel(int x, int y, uint16_t color);
+void fb_drawHorizontalLine(int x, int y, int width, uint16_t color);
+void fb_drawVerticalLine(int x, int y, int height, uint16_t color);
 
+//void fb_drawLine(int x, int y, uint16_t color);
 void fb_drawRectangle(int x, int y, int height, int width, uint16_t color);
 
 //flush to tft

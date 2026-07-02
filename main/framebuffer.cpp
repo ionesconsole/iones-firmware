@@ -5,6 +5,7 @@
 const int len = TFT_WIDTH * TFT_HEIGHT;
 
 FrameBuffer fb;
+Viewport vp;
 
 bool fb_init(uint8_t flags){
     
@@ -162,9 +163,20 @@ void fb_drawRectangle(int x, int y, int width, int height, uint16_t color){
         }
         
     }
-    
-
 }
+
+void fb_drawPixel(int x, int y, uint16_t color){
+    fb.colorBuffer[x + fb.width*y] = color; 
+}
+
+void fb_print_info() {
+    Serial.printf("Framebuffer: %dx%d\n", fb.width, fb.height);
+    Serial.printf("Color:   %s\n", fb.colorBuffer ? "yes" : "no");
+    Serial.printf("Depth:   %s\n", fb.depthBuffer ? "yes" : "no");
+    Serial.printf("Stencil: %s\n", fb.stencilBuffer ? "yes" : "no");
+}
+
+
 
 void fb_push_tft(){
     if(!fb.colorBuffer){return;}
