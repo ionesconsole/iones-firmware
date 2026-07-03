@@ -20,9 +20,36 @@
 #define FB_STENCIL_BUFFER 0x02
 
 
-struct DirtyRect{
+struct FBRect {
+    int x0;
+    int y0;
+    int x1;
+    int y1;
+};
 
+struct FBDirtyRect {
+    bool valid;
 
+    int x0;
+    int y0;
+    int x1;
+    int y1;
+
+    FBDirtyRect()
+        : valid(false),
+          x0(0),
+          y0(0),
+          x1(0),
+          y1(0)
+    {
+    }
+};
+
+struct Viewport{
+    int x;
+    int y;
+    int width;
+    int height;
 };
 
 
@@ -48,7 +75,13 @@ struct FrameBuffer{
     }
 };
 
-
+//Dirty rects
+void fb_clear_dirty();
+bool fb_has_dirty();
+bool fb_rect_is_valid(FBRect rect);
+void fb_flush_dirty();
+void fb_flush_full();
+void fb_flush();
 
 
 bool fb_init(uint8_t flags = 0);
@@ -66,9 +99,13 @@ void fb_clear_all(
 );
 void fb_set_pixel(int x, int y, uint16_t color);
 void fb_get_pixel();
-
+void fb_print_info();
 //drawing functions
+void fb_drawPixel(int x, int y, uint16_t color);
+void fb_drawHorizontalLine(int x, int y, int width, uint16_t color);
+void fb_drawVerticalLine(int x, int y, int height, uint16_t color);
 
+//void fb_drawLine(int x, int y, uint16_t color);
 void fb_drawRectangle(int x, int y, int height, int width, uint16_t color);
 
 //flush to tft
