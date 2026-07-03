@@ -20,9 +20,29 @@
 #define FB_STENCIL_BUFFER 0x02
 
 
-struct DirtyRect{
+struct FBRect {
+    int x0;
+    int y0;
+    int x1;
+    int y1;
+};
 
+struct FBDirtyRect {
+    bool valid;
 
+    int x0;
+    int y0;
+    int x1;
+    int y1;
+
+    FBDirtyRect()
+        : valid(false),
+          x0(0),
+          y0(0),
+          x1(0),
+          y1(0)
+    {
+    }
 };
 
 struct Viewport{
@@ -55,7 +75,13 @@ struct FrameBuffer{
     }
 };
 
-
+//Dirty rects
+void fb_clear_dirty();
+bool fb_has_dirty();
+bool fb_rect_is_valid(FBRect rect);
+void fb_flush_dirty();
+void fb_flush_full();
+void fb_flush();
 
 
 bool fb_init(uint8_t flags = 0);
