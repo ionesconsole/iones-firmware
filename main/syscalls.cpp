@@ -20,7 +20,7 @@ void init_syscalls(WRState* wr_state) {
 
 
 
-// TODO: implement all syscalls here.
+// TODO: implement all syscalls here.  
 
 void _sys_clear_scr ( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr ) {
 	tft.fillRect(0, 0, 320, 240, TFT_BLACK);
