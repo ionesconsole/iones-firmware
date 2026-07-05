@@ -4,6 +4,8 @@
 //static uint16_t* framebuffer = nullptr;
 const int len = TFT_WIDTH * TFT_HEIGHT;
 
+//FBDirtyRect dr;
+//DirtyList dl;
 FrameBuffer fb;
 Viewport vp;
 
