@@ -8,8 +8,8 @@
 struct FBRect {
     int x0;
     int y0;
-    int x1;//width added
-    int y1;//height added
+    int x1;//width added should be exclusive
+    int y1;//height added should be exclusive
 };
 
 struct DirtyList{
@@ -26,8 +26,8 @@ struct FBDirtyRect {
 
     int x0;
     int y0;
-    int x1;//width added
-    int y1;//height added
+    int x1;
+    int y1;
 
     FBDirtyRect()
         : valid(false),
@@ -53,8 +53,10 @@ int fb_dirty_area();
 void fb_clip_rect(FBRect r);
 bool fb_dirty_intersect(FBRect r, FBRect z);
 bool fb_dirty_contains(FBRect r, FBRect z);
-bool fb_dirty_rect_valid(FBRect r);
+//bool fb_dirty_rect_valid(FBRect r);
 bool fb_has_dirty();
 bool fb_rect_is_valid(FBRect rect);
+FBRect fb_dirty_union(FBRect r, FBRect z);
+bool fb_is_full_dirty(DirtyList dl);
 
 
