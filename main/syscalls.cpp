@@ -13,9 +13,9 @@ void init_syscalls(WRState* wr_state) {
 	wr_registerFunction(wr_state, "isKeyPressed", 	_sys_key_pressed	);
 	wr_registerFunction(wr_state, "isKeyReleased", 	_sys_key_released	);
 	wr_registerFunction(wr_state, "selectPressed", 	_sys_select_pressed	);
-	wr_registerFunction(wr_state, "startPressed", 	_sys_start_pressed	);
+	wr_registerFunction(wr_state, "startPressed", 	_sys_start_pressed	); 
 	// buffer calls
-	wr_registerFunction(wr_state, "DrawPixel", 	_sys_fb_draw_pixel	);
+	//wr_registerFunction(wr_state, "DrawPixel", 	_sys_fb_draw_pixel	);
 }
 
 

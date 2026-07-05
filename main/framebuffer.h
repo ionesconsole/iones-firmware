@@ -2,10 +2,10 @@
 #include "globals.h"
 #include <Arduino.h>
 #include <stdint.h>
+#include "dirtyRect.h"
 
 #define TFT_WIDTH  32
 #define TFT_HEIGHT 16
-
 #define RGB565_BLACK 0x0000
 #define RGB565_WHITE 0xFFFF
 #define RGB565_RED   0xF800
@@ -19,31 +19,6 @@
 #define FB_DEPTH_BUFFER   0x01
 #define FB_STENCIL_BUFFER 0x02
 
-
-struct FBRect {
-    int x0;
-    int y0;
-    int x1;
-    int y1;
-};
-
-struct FBDirtyRect {
-    bool valid;
-
-    int x0;
-    int y0;
-    int x1;
-    int y1;
-
-    FBDirtyRect()
-        : valid(false),
-          x0(0),
-          y0(0),
-          x1(0),
-          y1(0)
-    {
-    }
-};
 
 struct Viewport{
     int x;
@@ -62,6 +37,7 @@ struct FrameBuffer{
     bool hasColor;
     bool hasDepth;
     bool hasStencil;
+    DirtyList dirty;
     FrameBuffer()
         : width(TFT_WIDTH),
           height(TFT_HEIGHT),
