@@ -115,7 +115,7 @@ void fb_shutdown(){
 
 
 void fb_set_pixel(int x, int y, uint16_t color){
-    if(!fb.colorBuffer){ Serial.printf("No framebuffer exists!");}
+    if(!fb.colorBuffer){ Serial.printf("No framebuffer exists!"); return;}
 
     if (x < 0 || x >= TFT_WIDTH)
     {
@@ -161,14 +161,19 @@ void fb_drawRectangle(int x, int y, int width, int height, uint16_t color){
     {
         for (int j = x; j < x + width; j++)
         {
-            fb.colorBuffer[i + j*fb.width] = color;            
+            fb.colorBuffer[j + i*fb.width] = color;            
         }
         
     }
 }
 
-void fb_drawPixel(int x, int y, uint16_t color){
-    fb.colorBuffer[x + fb.width*y] = color; 
+void fb_drawPixel(int x, int y, uint16_t color) {
+    if (!fb.colorBuffer) return;
+
+    if (x < 0 || x >= fb.width) return;
+    if (y < 0 || y >= fb.height) return;
+
+    fb.colorBuffer[x + y * fb.width] = color;
 }
 
 void fb_print_info() {

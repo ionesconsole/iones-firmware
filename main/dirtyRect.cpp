@@ -22,39 +22,41 @@ void fb_clip_rect(FBRect &r){
     }
 }
 
-bool fb_rect_is_valid(FBRect r){
-    if (r.x0 > r.x1 && r.y0 > r.y1)
-    {
-        return false;
-    }
-    return true;
-
+bool fb_rect_is_valid(const FBRect& r) {
+    return r.x0 < r.x1 && r.y0 < r.y1;
 }
 
 bool fb_has_dirty(){
     return fb.dirty.count;
 }
 
-bool fb_dirty_contains(FBRect r, FBRect z){
-    if (r.x0 < z.x0 && r.y0 < z.y1)
-    {
-        if (r.x1 > z.x1 && r.y1 > z.y1)
-        {
+bool fb_dirty_contains(FBRect r, FBRect z) {
+    if (r.x0 <= z.x0 && r.y0 <= z.y0) {
+        if (r.x1 >= z.x1 && r.y1 >= z.y1) {
             return true;
         }
-        
-    } 
+    }
+
     return false;
 }
 
-bool fb_dirty_intersect(FBRect r, FBRect z){
-    if (r.x0 > z.x0 && r.y0 > z.y1)
-    {
-        if (r.x1 < z.x1 && r.y1 < z.y1)
-        {
-            return false;
-        }
+bool fb_dirty_intersect(FBRect r, FBRect z) {
+    if (r.x0 >= z.x1) {
+        return false; 
     }
+
+    if (r.x1 <= z.x0) {
+        return false; 
+    }
+
+    if (r.y0 >= z.y1) {
+        return false; 
+    }
+
+    if (r.y1 <= z.y0) {
+        return false; 
+    }
+
     return true;
 }
 
@@ -76,21 +78,16 @@ FBRect fb_dirty_union(FBRect r, FBRect z){
 
 }
 
-bool fb_is_full_dirty(DirtyList dl){
-    if (dl.count == 1)
-    {
-        if (dl.d_list[1].x0 == 0 && dl.d_list[1].y0 == 0)
-        {
-            if (dl.d_list[1].x1 == fb.width && dl.d_list[1].y1 == fb.height)
-            {
+bool fb_is_full_dirty(const DirtyList& dl) {
+    if (dl.count == 1) {
+        if (dl.d_list[0].x0 == 0 && dl.d_list[0].y0 == 0) {
+            if (dl.d_list[0].x1 == fb.width && dl.d_list[0].y1 == fb.height) {
                 return true;
             }
-            
         }
-        
     }
+
     return false;
-    
 }
 
 // ----- MAIN FUNCTIONS -----
