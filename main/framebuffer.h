@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <stdint.h>
 #include "dirtyRect.h"
+#include "esp_heap_caps.h"
 
 #define TFT_WIDTH  32
 #define TFT_HEIGHT 16
@@ -38,6 +39,11 @@ struct FrameBuffer{
     bool hasDepth;
     bool hasStencil;
     DirtyList dirty;
+    //dma
+    bool dmaEnabled;
+    uint16_t* dmaLineBuffer;
+    int dmaLineBufferHeight;
+    //--
     FrameBuffer()
         : width(TFT_WIDTH),
           height(TFT_HEIGHT),
@@ -50,14 +56,6 @@ struct FrameBuffer{
     {
     }
 };
-
-//Dirty rects
-void fb_clear_dirty();
-bool fb_has_dirty();
-bool fb_rect_is_valid(FBRect rect);
-void fb_flush_dirty();
-void fb_flush_full();
-void fb_flush();
 
 
 bool fb_init(uint8_t flags = 0);
@@ -87,3 +85,13 @@ void fb_drawRectangle(int x, int y, int height, int width, uint16_t color);
 //flush to tft
 //void fb_push_wrapper();
 void fb_push_tft();
+
+//DMA template
+bool fb_init_dma(int lines = 8);
+void fb_shutdown_dma();
+
+void fb_push_tft();
+void fb_push_tft(bool useDMA);
+
+void fb_push_tft_normal();
+void fb_push_tft_dma();
