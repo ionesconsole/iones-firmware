@@ -1,5 +1,6 @@
 #include "framebuffer.h"
 #include "globals.h"
+#include "esp_heap_caps.h"
 
 //static uint16_t* framebuffer = nullptr;
 const int len = TFT_WIDTH * TFT_HEIGHT;
@@ -9,13 +10,15 @@ const int len = TFT_WIDTH * TFT_HEIGHT;
 FrameBuffer fb;
 Viewport vp;
 
+
+// fb_init(FB_DEPTH_BUFFER | FB_STENCIL_BUFFER | FB_DMA_BUFFER); example usage of flags
 bool fb_init(uint8_t flags){
     
     size_t bytes = fb.height*fb.width*sizeof(uint16_t);
     fb.colorBuffer = (uint16_t*)ps_malloc(bytes);
     if(!fb.colorBuffer){
         Serial.printf("colorBuffer could not be allocated on psram..: %u bytes", bytes);
-        //fb_shutdown
+        
         return false;
     }
 
@@ -43,6 +46,17 @@ bool fb_init(uint8_t flags){
         fb.hasStencil = true;
         Serial.printf("stencilBuffer allocated! -> %u bytes", bytes);
     }
+
+    if (flags & FB_DMA)
+    {
+        #ifdef USE_DMA_TO_TFT
+            tft.initDMA();
+            //check for fb_init_dma
+        #else
+            Serial.printf("Could not initialize DMA...");
+        #endif
+    }
+    
 
 
     if (fb.hasColor) {
@@ -95,6 +109,7 @@ void fb_clear_all(uint16_t color, uint16_t depth, uint8_t stencil) {
 }
 
 void fb_shutdown(){
+    fb_shutdown_dma();
     if(fb.colorBuffer){
         free(fb.colorBuffer);
         fb.colorBuffer = nullptr;
@@ -191,4 +206,51 @@ void fb_push_tft(){
     tft.pushImage(0,0,fb.width,fb.height,fb.colorBuffer);
     tft.endWrite();
 
+}
+
+bool fb_init_dma(int lines){
+
+    if (lines <= 0)
+    {
+        lines = 1;
+    }
+
+    if (lines > fb.height)
+    {
+        lines = fb.height;
+    }
+
+    if (!fb.colorBuffer)
+    {
+        Serial.printf("Cannot see color buffer!");
+        return;
+    }
+
+    if (fb.dmaLineBuffer)
+    {
+        free(fb.dmaLineBuffer);
+        fb.dmaLineBuffer = nullptr;
+    }
+
+    fb.dmaLineBuffer = ( uint16_t*)heap_caps_malloc(fb.width * lines * sizeof(uint16_t), MALLOC_CAP_DMA);
+    if (!fb.dmaLineBuffer)
+    {
+        Serial.printf("DMA Init failed...");
+        return;
+    }
+    else{
+        Serial.printf("DMA line buffer allocated: %u bytes (%d lines)\n", bytes ,lines);
+        return true;
+    }
+       
+}
+
+void fb_shutdown_dma(){
+    if (fb.dmaLineBuffer) {
+        free(fb.dmaLineBuffer);
+        fb.dmaLineBuffer = nullptr;
+    }
+
+    fb.dmaEnabled = false;
+    fb.dmaLineBufferHeight = 0;
 }

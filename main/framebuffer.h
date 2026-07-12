@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <stdint.h>
 #include "dirtyRect.h"
-#include "esp_heap_caps.h"
+
 
 #define TFT_WIDTH  32
 #define TFT_HEIGHT 16
@@ -16,9 +16,12 @@
 #define RGB565_MAGENTA 0xF81F
 #define RGB565_CYAN 0x07FF
 
+// NOTE: FOR SPI DISPLAYS ONLY
+#define USE_DMA_TO_TFT
 
 #define FB_DEPTH_BUFFER   0x01
 #define FB_STENCIL_BUFFER 0x02
+#define FB_DMA 0x04
 
 
 struct Viewport{
@@ -52,7 +55,10 @@ struct FrameBuffer{
           stencilBuffer(nullptr),
           hasColor(false),
           hasDepth(false),
-          hasStencil(false)
+          hasStencil(false),
+          dmaEnabled(false),
+          dmaLineBuffer(nullptr),
+          dmaLineBufferHeight(0),
     {
     }
 };
@@ -90,7 +96,7 @@ void fb_push_tft();
 bool fb_init_dma(int lines = 8);
 void fb_shutdown_dma();
 
-void fb_push_tft();
+
 void fb_push_tft(bool useDMA);
 
 void fb_push_tft_normal();
