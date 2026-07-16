@@ -254,3 +254,60 @@ void fb_shutdown_dma(){
     fb.dmaEnabled = false;
     fb.dmaLineBufferHeight = 0;
 }
+
+
+void fb_push_tft(bool useDMA) {
+    if (!fb.colorBuffer) {
+        return;
+    }
+
+    if (useDMA) {
+#ifdef USE_DMA_TO_TFT
+        if (fb.dmaEnabled && fb.dmaLineBuffer && fb.dmaLineBufferHeight > 0) {
+            int lines = fb.dmaLineBufferHeight;
+
+            tft.startWrite();
+
+            for (int y = 0; y < fb.height; y += lines) {
+                int blockH = lines;
+
+                if (y + blockH > fb.height) {
+                    blockH = fb.height - y;
+                }
+
+                for (int row = 0; row < blockH; row++) {
+                    uint16_t* src = fb.colorBuffer + (y + row) * fb.width;
+                    uint16_t* dst = fb.dmaLineBuffer + row * fb.width;
+
+                    memcpy(dst, src, fb.width * sizeof(uint16_t));
+                }
+
+                while (tft.dmaBusy()) {
+                    delay(0);
+                }
+
+                tft.pushImageDMA(
+                    0,
+                    y,
+                    fb.width,
+                    blockH,
+                    fb.dmaLineBuffer
+                );
+            }
+
+            while (tft.dmaBusy()) {
+                delay(0);
+            }
+
+            tft.endWrite();
+            return;
+        }
+#endif
+        // DMA istendi ama USE_DMA_TO_TFT kapalıysa veya buffer hazır değilse
+        // alttaki normal pushImage yoluna düşer.
+    }
+
+    tft.startWrite();
+    tft.pushImage(0, 0, fb.width, fb.height, fb.colorBuffer);
+    tft.endWrite();
+}
