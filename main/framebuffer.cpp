@@ -239,7 +239,7 @@ bool fb_init_dma(int lines){
         return;
     }
     else{
-        Serial.printf("DMA line buffer allocated: %u bytes (%d lines)\n", bytes ,lines);
+        Serial.printf("DMA line buffer allocated: %u bytes (%d lines)\n", sizeof(fb.dmaLineBuffer) ,lines);
         return true;
     }
        
@@ -303,8 +303,7 @@ void fb_push_tft(bool useDMA) {
             return;
         }
 #endif
-        // DMA istendi ama USE_DMA_TO_TFT kapalıysa veya buffer hazır değilse
-        // alttaki normal pushImage yoluna düşer.
+        //gotta change it here
     }
 
     tft.startWrite();
