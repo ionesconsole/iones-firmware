@@ -10,5 +10,6 @@
     "--background-index",
     "--query-driver=**",
     "--compile-commands-dir=c:\\Users\\Abes\\Documents\\GitHub\\iones-firmware\\build"
-  ]
+  ],
+  "idf.portWin": "COM12"
 }

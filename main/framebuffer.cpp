@@ -239,7 +239,7 @@ bool fb_init_dma(int lines){
         return;
     }
     else{
-        Serial.printf("DMA line buffer allocated: %u bytes (%d lines)\n", bytes ,lines);
+        Serial.printf("DMA line buffer allocated: %u bytes (%d lines)\n", sizeof(fb.dmaLineBuffer) ,lines);
         return true;
     }
        
@@ -265,34 +265,30 @@ void fb_push_tft(bool useDMA) {
 #ifdef USE_DMA_TO_TFT
         if (fb.dmaEnabled && fb.dmaLineBuffer && fb.dmaLineBufferHeight > 0) {
             int lines = fb.dmaLineBufferHeight;
+            uint16_t* src = fb.colorBuffer;
+            
 
             tft.startWrite();
 
             for (int y = 0; y < fb.height; y += lines) {
-                int blockH = lines;
-
-                if (y + blockH > fb.height) {
-                    blockH = fb.height - y;
-                }
-
-                for (int row = 0; row < blockH; row++) {
-                    uint16_t* src = fb.colorBuffer + (y + row) * fb.width;
-                    uint16_t* dst = fb.dmaLineBuffer + row * fb.width;
-
-                    memcpy(dst, src, fb.width * sizeof(uint16_t));
+                uint16_t* dst = fb.dmaLineBuffer;
+                int currentLines = lines;
+                if (y + currentLines > fb.height) {
+                    currentLines = fb.height - y;
                 }
 
                 while (tft.dmaBusy()) {
                     delay(0);
                 }
 
-                tft.pushImageDMA(
-                    0,
-                    y,
-                    fb.width,
-                    blockH,
-                    fb.dmaLineBuffer
-                );
+                for (int row = 0; row < lines; row++) {
+                    memcpy(dst, src, fb.width * sizeof(uint16_t));
+                    src = src + fb.width;
+                    dst = dst + fb.width;
+                }
+
+            
+                tft.pushImageDMA(0, y, fb.width, lines, fb.dmaLineBuffer);
             }
 
             while (tft.dmaBusy()) {
@@ -303,8 +299,7 @@ void fb_push_tft(bool useDMA) {
             return;
         }
 #endif
-        // DMA istendi ama USE_DMA_TO_TFT kapalıysa veya buffer hazır değilse
-        // alttaki normal pushImage yoluna düşer.
+        
     }
 
     tft.startWrite();

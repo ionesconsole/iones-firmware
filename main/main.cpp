@@ -102,7 +102,7 @@ extern "C" void app_main(void)
     // Mount fail --> fatal
     if(!sd_ok) {
         draw_sd_error();
-        return;
+        return; 
     }
 
 

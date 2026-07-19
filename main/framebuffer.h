@@ -95,9 +95,5 @@ void fb_push_tft();
 //DMA template
 bool fb_init_dma(int lines = 8);
 void fb_shutdown_dma();
-
-
 void fb_push_tft(bool useDMA);
-
-void fb_push_tft_normal();
 void fb_push_tft_dma();
