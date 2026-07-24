@@ -19,4 +19,6 @@ Firmware of the ESP-32 based handheld console IONES.
 #### To do all above at once, run:
 `$ idf.py build flash run`
 
+[Open in Cirkit Designer](https://app.cirkitdesigner.com/project/4b4589c4-bea5-4c5b-9cf2-a128dabae6d1)
+
 ![Breadboard Wiring Diagram](./repo_assets/iones_final.png)
