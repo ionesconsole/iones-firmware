@@ -1,3 +1,4 @@
+#include "config.h"
 #include "buzzer.h"
 #include "esp_heap_caps.h"
 #include "freertos/FreeRTOS.h"
@@ -29,11 +30,11 @@ size_t load_sound_sheet(const int* sound_sheet) {
 }
 
 
-void unload_sound_sheet(int id) {
+void unload_sound_sheet(size_t id) {
     
     while(playing) vTaskDelay(1);
 
-    if(id <= 0 || id >= sound_sheets.size() || sound_sheets[id] == nullptr) return;
+    if(id < 0 || id >= sound_sheets.size() || sound_sheets[id] == nullptr) return;
     
     heap_caps_free(const_cast<int*> (sound_sheets[id]));
     sound_sheets[id] = nullptr;
@@ -76,5 +77,58 @@ void print_all_sheets() {
     }
 
     printf("--END--\n");
-    printf("PSIRAM Empty Space: %ld\n", ESP.getFreePsram());
+    printf("PSRAM Empty Space: %ld\n", ESP.getFreePsram());
+}
+
+TaskHandle_t buzzer_task;
+const int* current_sound = nullptr;
+
+void init_buzzer_task() {
+    xTaskCreate(buzzer_loop, "buzzer", 2048, xTaskGetCurrentTaskHandle(), 2, &buzzer_task);
+    
+    // Wait until buzzer task is ready
+    ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+    printf("Buzzer task created.\n");
+}
+
+void buzzer_loop(void* arg) {
+    TaskHandle_t creator = (TaskHandle_t)arg;
+
+    size_t i ;
+    int notedur;
+    const int* sound;
+
+    xTaskNotifyGive(creator); // Signal main task so that it can move on
+
+    while(true) {
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        
+        sound = current_sound;
+        
+        i = 1;
+        notedur = sound[0];
+        playing = true;
+
+
+        while(sound[i] != -1) {
+            tone(BUZZER, sound[i++], notedur);
+
+            // Proceed to the new sound if received new call
+            if(ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(notedur))) {
+                sound = current_sound;
+                i = 1;
+                notedur = sound[0];
+                playing = true;
+            }
+        }
+
+        playing = false;
+    }
+}
+
+void play_sheet(size_t id) {
+
+    if(id < 0 || id >= sound_sheets.size() || sound_sheets[id] == nullptr) return;
+    current_sound = sound_sheets[id];
+    xTaskNotifyGive(buzzer_task);
 }

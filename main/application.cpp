@@ -75,7 +75,11 @@ void load_app() {
 }
 
 #include "syscalls.h"
+#include "buzzer.h"
 void exec_app() {
+
+    // Initialize sound system
+    init_buzzer_task();
 
     // Initialize WRENCH VM and bind syscalls
     WRState* wr_state = wr_newState();

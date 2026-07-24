@@ -74,3 +74,8 @@ void _sys_flush_sounds( WRContext* c, const WRValue* argv, const int argn, WRVal
  * Prints the information of all sheets.
  */
 void _sys_print_sounds( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr );
+
+/**
+ * Plays a sound sheet with given id.
+ */
+void _sys_play_sound( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr );

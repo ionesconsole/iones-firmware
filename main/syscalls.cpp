@@ -19,6 +19,7 @@ void init_syscalls(WRState* wr_state) {
 	wr_registerFunction(wr_state, "unloadSound", 	_sys_unload_sound	); 
 	wr_registerFunction(wr_state, "flushSounds", 	_sys_flush_sounds	); 
 	wr_registerFunction(wr_state, "printSounds", 	_sys_print_sounds	); 
+	wr_registerFunction(wr_state, "playSound", 		_sys_play_sound		); 
 
 	// buffer calls
 	//wr_registerFunction(wr_state, "DrawPixel", 	_sys_fb_draw_pixel	);
@@ -78,13 +79,6 @@ void _sys_load_sound ( WRContext* c, const WRValue* argv, const int argn, WRValu
 	// Finalise list
 	new_sheet[size -  1] = -1;
 
-	printf("Note duration: %d\n", new_sheet[0]);
-	int i = 1;
-	do {
-		printf("%d\t%d\n", i, new_sheet[i]);
-		i++;
-	} while (new_sheet[i] != -1);
-
 	//! FROM NOW ON, THE OWNERSHIP OF THE ARRAY IS GIVEN TO THE BUZZER LIBRARY. DON'T FREE HERE.
 	wr_makeInt(&retVal, load_sound_sheet(new_sheet));
 }
@@ -97,3 +91,6 @@ void _sys_flush_sounds( WRContext* c, const WRValue* argv, const int argn, WRVal
 
 void _sys_print_sounds( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr )
 { print_all_sheets(); }
+
+void _sys_play_sound( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr )
+{ play_sheet(argv -> asInt()); }
