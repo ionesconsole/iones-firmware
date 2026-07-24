@@ -105,6 +105,14 @@ extern "C" void app_main(void)
         return; 
     }
 
+    /*if (!SD.exists("/APP1")) {
+        if (SD.mkdir("/APP1")) {
+            printf("APP1 created.\n");
+        } else {
+            printf("APP1 creation failed.\n");
+        }
+    }*/
+
 
     io_init();
 
@@ -116,7 +124,9 @@ extern "C" void app_main(void)
             printf("FREE SPACE after init: %ld\n", ESP.getFreePsram());
             break;
         case FATAL:
+            printf("ENTERED FATAL");
             gui_err();
+            printf("AFTER GUI_ERR");
             return;
         case GUI_LOOP:
             gui_loop();
