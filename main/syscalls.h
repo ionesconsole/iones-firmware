@@ -54,3 +54,23 @@ void _sys_select_pressed ( WRContext* c, const WRValue* argv, const int argn, WR
  * Checks if Start was pressed.
  */
 void _sys_start_pressed ( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr );
+
+/**
+ * Loads a new music sheet.
+ */
+void _sys_load_sound ( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr );
+
+/**
+ * Unloads the music sheet with given id.
+ */
+void _sys_unload_sound( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr );
+
+/**
+ * Flushes all the sound sheets in one go.
+ */
+void _sys_flush_sounds( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr );
+
+/**
+ * Prints the information of all sheets.
+ */
+void _sys_print_sounds( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr );

@@ -7,14 +7,14 @@ std::vector <const int*> sound_sheets;
 
 bool playing = false;
 
-int load_sound_sheet(const int* sound_sheet) {
+size_t load_sound_sheet(const int* sound_sheet) {
     
-    while(playing);
+    while(playing) vTaskDelay(1);
 
     size_t size = sound_sheets.size();
     
     // Find first available space and use there if available
-    for(int i = 0; i < size; i++) {
+    for(size_t i = 0; i < size; i++) {
         if(sound_sheets[i] == nullptr) {
             sound_sheets[i] = sound_sheet;
             printf("Found empty index at %d\n", i);
@@ -31,7 +31,7 @@ int load_sound_sheet(const int* sound_sheet) {
 
 void unload_sound_sheet(int id) {
     
-    while(playing);
+    while(playing) vTaskDelay(1);
 
     if(id <= 0 || id >= sound_sheets.size() || sound_sheets[id] == nullptr) return;
     
@@ -40,11 +40,26 @@ void unload_sound_sheet(int id) {
 
 }
 
+void flush_sheets() {
+    while(playing) vTaskDelay(1);
+    size_t size = sound_sheets.size();
+
+    for(size_t i = 0; i < size; i++) heap_caps_free(const_cast<int*> (sound_sheets[i]));
+
+    sound_sheets.clear();
+
+    printf("Sound sheets are flushed.\n");
+}
+
+
+#include "Arduino.h"
 void print_all_sheets() {
 
     size_t size = sound_sheets.size();
 
-    for(int i = 0; i < size; i++) {
+    printf("SIZE: %d\n", size);
+
+    for(size_t i = 0; i < size; i++) {
         
         printf("%d \t", i);
 
@@ -61,4 +76,5 @@ void print_all_sheets() {
     }
 
     printf("--END--\n");
+    printf("PSIRAM Empty Space: %ld\n", ESP.getFreePsram());
 }
