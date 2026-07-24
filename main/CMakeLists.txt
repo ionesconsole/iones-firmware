@@ -8,4 +8,6 @@ idf_component_register(SRCS
                     "wrench.cpp"
                     "application.cpp"
                     "syscalls.cpp"
+                    "buzzer.cpp"
+                    "buzzer.h"
                     INCLUDE_DIRS ".")

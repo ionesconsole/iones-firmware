@@ -22,6 +22,10 @@ void splash() {
     frame_buffer_gui.fillSprite(TFT_DARKGREY);
     frame_buffer_gui.pushImage(67, 95, 187, 51, logo);
     push_frame();
+
+    tone(BUZZER, 900, 50);
+    tone(BUZZER, 950, 50);
+    tone(BUZZER, 1000, 50);
 }
 
 void draw_sd_error() {
@@ -31,6 +35,11 @@ void draw_sd_error() {
     frame_buffer_gui.drawString("SD card could not be read.", 75, 140, 2);
     frame_buffer_gui.drawString("Press RESET to try again.", 80, 160, 2);
     push_frame();
+
+    tone(BUZZER, 1000, 50);
+    tone(BUZZER, 950, 50);
+    tone(BUZZER, 900, 50);
+    tone(BUZZER, 800, 50);
 }
 
 void init_list() {
@@ -117,6 +126,7 @@ void render_list(int index = 0) {
 
 
     push_frame();
+    tone(BUZZER, 1000, 30);
 }
 
 #include "input.h"
@@ -147,6 +157,8 @@ void gui_loop() {
 
     }
 
+    tone(BUZZER, 1000, 50);
+
     strncpy(selectedapp, appnames[current_app_index], 9);
     heap_caps_free(appnames); // !!! App list freed
     printf("App names freed.\n");
@@ -161,4 +173,9 @@ void gui_err() {
     frame_buffer_gui.setTextColor(TFT_DARKGREY);
     frame_buffer_gui.drawString(current_err, 20, 100, 2);
     push_frame();
+    
+    tone(BUZZER, 1000, 50);
+    tone(BUZZER, 950, 50);
+    tone(BUZZER, 900, 50);
+    tone(BUZZER, 800, 50);
 }

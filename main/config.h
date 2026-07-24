@@ -25,3 +25,5 @@
 #define GM_STR GPIO_NUM_16
 
 #define PATH_MAX_IOWR 256
+
+#define BUZZER GPIO_NUM_2

@@ -81,6 +81,9 @@ extern "C" void app_main(void)
     // Initialise Arduino interface
     initArduino();
 
+    // init buzzer
+    gpio_set_direction(BUZZER,   GPIO_MODE_OUTPUT);
+
     // Initialise TFT display
     tft.init();
     tft.setRotation(3);
