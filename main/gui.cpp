@@ -58,7 +58,7 @@ void init_list() {
         root.close();
         current_state = FATAL;
         current_err = "No applications found.";
-        //printf("No application found.\nClosed root.\nList was not allocated anyway.\n");
+        printf("No application found.\nClosed root.\nList was not allocated anyway.\n");
         return;
     }
 
@@ -68,7 +68,7 @@ void init_list() {
         root.close();
         current_state = FATAL;
         current_err = "Somehow, the application list could not be initialized.";
-        //printf("Something went wrong while allocating list.\nClosed root.\n");
+        printf("Something went wrong while allocating list.\nClosed root.\n");
         return;
     }
     
