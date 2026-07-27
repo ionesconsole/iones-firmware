@@ -1,5 +1,6 @@
 idf_component_register(SRCS 
                     "globals.cpp"
+                    "framebuffer.cpp"
                     "application.cpp"
                     "wrench.cpp"
                     "main.cpp"

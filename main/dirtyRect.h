@@ -12,14 +12,6 @@ struct FBRect {
     int y1;//height added should be exclusive
 };
 
-struct DirtyList{
-    FBDirtyRect d_list[MAX_RECTS];
-    int count;
-    FBDirtyList()
-        : count(0)
-    {
-    }
-}
 
 struct FBDirtyRect {
     bool valid; 
@@ -38,6 +30,17 @@ struct FBDirtyRect {
     {
     }
 };
+
+struct DirtyList{
+    FBDirtyRect d_list[MAX_RECTS];
+    int count;
+    DirtyList()
+        : count(0)
+    {
+    }
+};
+
+
 
 
 //Dirty rect main functions

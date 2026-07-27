@@ -58,9 +58,8 @@ struct FrameBuffer{
           hasStencil(false),
           dmaEnabled(false),
           dmaLineBuffer(nullptr),
-          dmaLineBufferHeight(0),
-    {
-    }
+          dmaLineBufferHeight(0)
+    {}
 };
 
 
@@ -78,7 +77,7 @@ void fb_clear_all(
     uint8_t stencil = 0
 );
 void fb_set_pixel(int x, int y, uint16_t color);
-void fb_get_pixel();
+uint16_t fb_get_pixel(int x, int y);
 void fb_print_info();
 //drawing functions
 void fb_drawPixel(int x, int y, uint16_t color);
