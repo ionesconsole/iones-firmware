@@ -96,11 +96,13 @@ extern "C" void app_main(void)
     tft.setSwapBytes(true);
     tft.setAttribute(PSRAM_ENABLE, true);
 
-    test_native();
+    //test_native();
 
     frame_buffer_gui.setAttribute(PSRAM_ENABLE, true);
 
     // init framebuffer
+    fb_init();
+
     frame_buffer_gui.createSprite(320, 240);
     frame_buffer_gui.setSwapBytes(true);
 
