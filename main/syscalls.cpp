@@ -1,7 +1,7 @@
 #include "syscalls.h"
 #include "globals.h"
 #include "input.h"
-
+#include "framebuffer.h"
 
 void init_syscalls(WRState* wr_state) {
 	// TODO: bind all syscalls here.
@@ -22,12 +22,43 @@ void init_syscalls(WRState* wr_state) {
 	wr_registerFunction(wr_state, "playSound", 		_sys_play_sound		); 
 
 	// buffer calls
-	//wr_registerFunction(wr_state, "DrawPixel", 	_sys_fb_draw_pixel	);
+	wr_registerFunction(wr_state, "drawPixel", 	_sys_fb_draw_pixel	);
+	wr_registerFunction(wr_state, "drawRectangle", 	_sys_fb_draw_rectangle	);
+	wr_registerFunction(wr_state, "pushTFT", 	_sys_fb_push_tft	);
 }
 
 
 
 // TODO: implement all syscalls here.  
+void _sys_fb_draw_pixel( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr ){
+	if (argn < 3){
+		return;
+	}
+
+	int x = argv[0].asInt();
+	int y = argv[1].asInt();
+	uint16_t color = (uint16_t)argv[2].asInt();
+
+	fb_drawPixel(x, y, color);
+}
+
+void _sys_fb_draw_rectangle( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr ){
+	if(argn < 5){
+		return;
+	}
+	int x = argv[0].asInt();
+	int y = argv[1].asInt();
+	int width = argv[2].asInt();
+	int height = argv[3].asInt();
+	uint16_t color = (uint16_t)argv[4].asInt();
+
+	fb_drawRectangle(x,y,width,height,color);
+
+}
+
+void _sys_fb_push_tft( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr ){
+	fb_push_tft();
+}
 
 void _sys_clear_scr ( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr ) {
 	tft.fillRect(0, 0, 320, 240, TFT_BLACK);

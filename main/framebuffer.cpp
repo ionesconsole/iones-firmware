@@ -223,7 +223,7 @@ bool fb_init_dma(int lines){
     if (!fb.colorBuffer)
     {
         Serial.printf("Cannot see color buffer!");
-        return;
+        return false;
     }
 
     if (fb.dmaLineBuffer)
@@ -236,7 +236,7 @@ bool fb_init_dma(int lines){
     if (!fb.dmaLineBuffer)
     {
         Serial.printf("DMA Init failed...");
-        return;
+        return false;
     }
     else{
         Serial.printf("DMA line buffer allocated: %u bytes (%d lines)\n", sizeof(fb.dmaLineBuffer) ,lines);

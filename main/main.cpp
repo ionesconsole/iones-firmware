@@ -10,6 +10,7 @@
 #include "SPI.h"
 #include "globals.h"
 #include "application.h"
+#include "framebuffer.h"
 
 // Init TFT interface
 TFT_eSPI tft = TFT_eSPI();
@@ -76,6 +77,14 @@ bool start_pressed() {
 }
 
 
+void test_native(){
+    fb_init();
+    fb_drawPixel(0,0,10);
+    int x = fb_get_pixel(0,0);
+    printf("pixel cords..: %d ", x);
+    
+}
+
 extern "C" void app_main(void)
 {
     // Initialise Arduino interface
@@ -90,9 +99,13 @@ extern "C" void app_main(void)
     tft.setSwapBytes(true);
     tft.setAttribute(PSRAM_ENABLE, true);
 
+    //test_native();
+
     frame_buffer_gui.setAttribute(PSRAM_ENABLE, true);
 
     // init framebuffer
+    fb_init();
+
     frame_buffer_gui.createSprite(320, 240);
     frame_buffer_gui.setSwapBytes(true);
 
