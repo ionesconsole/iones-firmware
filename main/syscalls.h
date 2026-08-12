@@ -54,3 +54,7 @@ void _sys_select_pressed ( WRContext* c, const WRValue* argv, const int argn, WR
  * Checks if Start was pressed.
  */
 void _sys_start_pressed ( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr );
+
+void _sys_fb_draw_pixel( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr );
+void _sys_fb_draw_rectangle( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr );
+void _sys_fb_push_tft( WRContext* c, const WRValue* argv, const int argn, WRValue& retVal, void* usr );
